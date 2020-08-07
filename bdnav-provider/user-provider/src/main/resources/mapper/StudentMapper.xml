@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdxh.user.persistence.StudentMapper">
+    <resultMap id="BaseResultMap" type="com.bdxh.user.entity.Student">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="school_id" jdbcType="BIGINT" property="schoolId"/>
+        <result column="school_code" jdbcType="VARCHAR" property="schoolCode"/>
+        <result column="school_name" jdbcType="VARCHAR" property="schoolName"/>
+        <result column="campus_name" jdbcType="VARCHAR" property="campusName"/>
+        <result column="college_name" jdbcType="VARCHAR" property="collegeName"/>
+        <result column="faculty_name" jdbcType="VARCHAR" property="facultyName"/>
+        <result column="profession_name" jdbcType="VARCHAR" property="professionName"/>
+        <result column="grade_name" jdbcType="VARCHAR" property="gradeName"/>
+        <result column="class_name" jdbcType="VARCHAR" property="className"/>
+        <result column="class_id" jdbcType="BIGINT" property="classId"/>
+        <result column="class_ids" jdbcType="VARCHAR" property="classIds"/>
+        <result column="class_names" jdbcType="VARCHAR" property="classNames"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="gender" jdbcType="TINYINT" property="gender"/>
+        <result column="birth" jdbcType="CHAR" property="birth"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="card_number" jdbcType="VARCHAR" property="cardNumber"/>
+        <result column="idcard" jdbcType="VARCHAR" property="idcard"/>
+        <result column="qq_number" jdbcType="VARCHAR" property="qqNumber"/>
+        <result column="wx_number" jdbcType="VARCHAR" property="wxNumber"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="nation_name" jdbcType="VARCHAR" property="nationName"/>
+        <result column="dormitory_address" jdbcType="VARCHAR" property="dormitoryAddress"/>
+        <result column="adress" jdbcType="VARCHAR" property="adress"/>
+        <result column="physical_number" jdbcType="VARCHAR" property="physicalNumber"/>
+        <result column="physical_chip_number" jdbcType="VARCHAR" property="physicalChipNumber"/>
+        <result column="activate" jdbcType="TINYINT" property="activate"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="operator" jdbcType="BIGINT" property="operator"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="image_name" jdbcType="VARCHAR" property="imageName"/>
+    </resultMap>
+    <sql id="studentCloumn">
+     id,school_id,school_code,school_name,campus_name,college_name,faculty_name,profession_name,
+     grade_name,class_name,class_id,class_ids,class_names,name,gender,birth,phone,card_number,idcard,
+     qq_number,wx_number,email,image,nation_name,dormitory_address,adress,physical_number,physical_chip_number,
+     activate,create_date,update_date,operator,operator_name,remark,image_name
+    </sql>
+    <!-- -->
+    <select id="selectAllStudentInfo" resultMap="BaseResultMap">
+        select
+        <include refid="studentCloumn"/>
+        from t_student
+        <where>
+            <if test="studentQueryDto.schoolName!=null and studentQueryDto.schoolName!=''">
+                AND school_name LIKE CONCAT('%',CONCAT(#{studentQueryDto.schoolName},'%'))
+            </if>
+            <if test="studentQueryDto.name!=null and studentQueryDto.name!=''">
+                AND `name` LIKE CONCAT('%',CONCAT(#{studentQueryDto.name},'%'))
+            </if>
+            <if test="studentQueryDto.phone!=null and studentQueryDto.phone!=''">
+                AND phone LIKE CONCAT('%',CONCAT(#{studentQueryDto.phone},'%'))
+            </if>
+            <if test="studentQueryDto.cardNumber!=null and studentQueryDto.cardNumber!=''">
+                AND card_number LIKE CONCAT('%',CONCAT(#{studentQueryDto.cardNumber},'%'))
+            </if>
+            <if test="studentQueryDto.activate!=null and studentQueryDto.activate!=''">
+                AND activate= #{studentQueryDto.activate}
+            </if>
+            <if test="studentQueryDto.schoolCode!=null and studentQueryDto.schoolCode!=''">
+                AND school_code = #{studentQueryDto.schoolCode}
+            </if>
+            <if test="studentQueryDto.classIds!=null and studentQueryDto.classIds!=''">
+                AND class_ids like CONCAT(#{studentQueryDto.classIds},'%')
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+    <!-- 删除学生信息-->
+    <delete id="removeStudentInfo">
+     DELETE FROM t_student
+     WHERE school_code=#{schoolCode}
+     AND card_number=#{cardNumber}
+    </delete>
+    <!-- 查询单个学生信息 -->
+    <select id="selectStudentVo" resultType="com.bdxh.user.vo.StudentVo" parameterType="String">
+         SELECT
+            id AS sId,
+            school_id AS schoolId,
+            school_code AS schoolCode,
+            school_name AS schoolName,
+            campus_name AS campusName,
+            college_name AS collegeName,
+            faculty_name AS facultyName,
+            profession_name AS professionName,
+            grade_name AS gradeName,
+            class_name AS className,
+            class_id AS classId,
+            class_ids AS classIds,
+            class_names AS classNames,
+            `name` AS sName,
+            gender,
+            birth,
+            phone,
+            card_number AS cardNumber,
+            idcard,
+            qq_number AS qqNumber,
+            wx_number AS wxNumber,
+            email,
+            image,
+            image_name AS imageName,
+            nation_name AS nationName,
+            dormitory_address AS dormitoryAddress,
+            adress,
+            physical_number AS physicalNumber,
+            physical_chip_number AS physicalChipNumber,
+            activate,
+            create_date AS createDate,
+            update_date AS updateDate,
+            operator,
+            operator_name AS operatorName,
+            remark
+        FROM
+            t_student
+        WHERE
+         school_code = #{schoolCode}
+     and card_number = #{cardNumber}
+     limit 1
+</select>
+    <update id="updateStudentInfo">
+        UPDATE t_student
+        SET
+        <if test="student.campusName!=null and student.campusName!=''">
+            campus_name=#{student.campusName},
+        </if>
+
+        <if test="student.classId!=null and student.className!=''">
+            class_id=#{student.classId},
+        </if>
+        <if test="student.classIds!=null and student.classIds!=''">
+            class_ids=#{student.classIds},
+        </if>
+        <if test="student.classNames!=null and student.classNames!=''">
+            class_names=#{student.classNames},
+        </if>
+        <if test="student.name!=null and student.name!=''">
+            name=#{student.name},
+        </if>
+        <if test="student.gender!=null and student.gender!=''">
+            gender=#{student.gender},
+        </if>
+        <if test="student.birth!=null and student.birth!=''">
+            birth=#{student.birth},
+        </if>
+        <if test="student.phone!=null and student.phone!=''">
+            phone=#{student.phone},
+        </if>
+        <if test="student.idcard!=null and student.idcard!=''">
+            idcard=#{student.idcard},
+        </if>
+        <if test="student.qqNumber!=null and student.qqNumber!=''">
+            qq_number=#{student.qqNumber},
+        </if>
+        <if test="student.wxNumber!=null and student.wxNumber!=''">
+            wx_number=#{student.wxNumber},
+        </if>
+        <if test="student.email!=null and student.email!=''">
+            email=#{student.email},
+        </if>
+        <if test="student.image!=null and student.image!=''">
+            image=#{student.image},
+        </if>
+        <if test="student.imageName!=null and student.imageName!=''">
+            image_name=#{student.imageName},
+        </if>
+        <if test="student.nationName!=null and student.nationName!=''">
+            nation_name=#{student.nationName},
+        </if>
+        <if test="student.dormitoryAddress!=null and student.dormitoryAddress!=''">
+            dormitory_address=#{student.dormitoryAddress},
+        </if>
+        <if test="student.adress!=null and student.adress!=''">
+            adress=#{student.adress},
+        </if>
+        <if test="student.physicalNumber!=null and student.physicalNumber!=''">
+            physical_number=#{student.physicalNumber},
+        </if>
+        <if test="student.physicalChipNumber!=null and student.physicalChipNumber!=''">
+            physical_chip_number=#{student.physicalChipNumber},
+        </if>
+        <if test="student.activate!=0">
+            activate=#{student.activate},
+        </if>
+        <if test="student.operator!=null and student.operator!=''">
+            operator=#{student.operator},
+        </if>
+        <if test="student.operatorName!=null and student.operatorName!=''">
+            operator_name=#{student.operatorName},
+        </if>
+        <if test="student.remark!=null and student.remark!=''">
+            remark=#{student.remark},
+        </if>
+        <choose>
+            <when test="student.collegeName != null and student.collegeName !=''">
+                college_name=#{student.collegeName},
+            </when>
+            <otherwise>
+                college_name='',
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="student.facultyName != null and student.facultyName !=''">
+                faculty_name=#{student.facultyName},
+            </when>
+            <otherwise>
+                faculty_name='',
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="student.professionName != null and student.professionName !=''">
+                profession_name=#{student.professionName},
+            </when>
+            <otherwise>
+                profession_name='',
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="student.gradeName != null and student.gradeName !=''">
+                grade_name=#{student.gradeName},
+            </when>
+            <otherwise>
+                grade_name='',
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="student.className != null and student.className !=''">
+                class_name=#{student.className},
+            </when>
+            <otherwise>
+                class_name='',
+            </otherwise>
+        </choose>
+        update_date=NOW()
+        WHERE school_code=#{student.schoolCode} AND card_number=#{student.cardNumber};
+    </update>
+
+    <select id="findStudentBySchoolClassId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="studentCloumn"/>
+        FROM t_student
+        WHERE school_code=#{schoolCode,jdbcType=VARCHAR}
+        AND school_id=#{schoolId,jdbcType=BIGINT}
+        AND class_id=#{classId,jdbcType=BIGINT}
+        limit 1;
+    </select>
+
+    <!--批量删除学生信息-->
+    <delete id="batchRemoveStudentInfo">
+        delete from t_student where (school_code,card_number)in
+        <foreach collection="list" separator="," open="(" close=")" item="list">
+            (#{list.schoolCode},#{list.cardNumber})
+        </foreach>
+    </delete>
+
+    <!--批量新增学生-->
+    <insert id="batchSaveStudentInfo">
+        INSERT INTO t_student (
+        id,
+        school_id,
+        school_code,
+        school_name,
+        campus_name,
+        college_name,
+        faculty_name,
+        profession_name,
+        grade_name,
+        class_name,
+        class_id,
+        class_ids,
+        class_names,
+        name,
+        gender,
+        birth,
+        phone,
+        card_number,
+        idcard,
+        qq_number,
+        wx_number,
+        email,
+        image,
+        image_name,
+        nation_name,
+        dormitory_address,
+        adress,
+        physical_number,
+        physical_chip_number,
+        activate,
+        create_date,
+        update_date,
+        operator,
+        operator_name,
+        remark
+        )
+        VALUES
+        <foreach collection="list" index="index" separator="," item="studentList">
+            (
+            #{studentList.id},
+            #{studentList.schoolId},
+            #{studentList.schoolCode},
+            #{studentList.schoolName},
+            #{studentList.campusName},
+            #{studentList.collegeName},
+            #{studentList.facultyName},
+            #{studentList.professionName},
+            #{studentList.gradeName},
+            #{studentList.className},
+            #{studentList.classId},
+            #{studentList.classIds},
+            #{studentList.classNames},
+            #{studentList.name},
+            #{studentList.gender},
+            #{studentList.birth},
+            #{studentList.phone},
+            #{studentList.cardNumber},
+            #{studentList.idcard},
+            #{studentList.qqNumber},
+            #{studentList.wxNumber},
+            #{studentList.email},
+            #{studentList.image},
+            #{studentList.imageName},
+            #{studentList.nationName},
+            #{studentList.dormitoryAddress},
+            #{studentList.adress},
+            #{studentList.physicalNumber},
+            #{studentList.physicalChipNumber},
+            #{studentList.activate},
+            #{studentList.createDate},
+            #{studentList.updateDate},
+            #{studentList.operator},
+            #{studentList.operatorName},
+            #{studentList.remark}
+            )
+        </foreach>
+    </insert>
+
+    <!--根据学校Code查询学号-->
+    <select id="queryCardNumberBySchoolCode" resultType="java.lang.String">
+        select card_number from t_student where school_code=#{schoolCode}
+    </select>
+    <!--根据院系组织架构ID查询学生-->
+    <select id="findStudentInfoByClassOrg" resultMap="BaseResultMap">
+        select
+        <include refid="studentCloumn"/>
+        from t_student
+        <where>
+            and school_code=#{schoolCode}
+            <if test="type==1">
+                and college_name!=''
+            </if>
+            <if test="type==2">
+                and faculty_name!=''
+            </if>
+            <if test="type==3">
+                and profession_name!=''
+            </if>
+            <if test="type==4">
+                and grade_name!=''
+            </if>
+            <choose>
+                <when test="type==5">
+                    and class_ids=#{parentIds}
+                </when>
+                <otherwise>
+                    and class_ids Like CONCAT(#{parentIds},'%')
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="findStudentInfo" resultMap="BaseResultMap">
+        select
+        <include refid="studentCloumn"/>
+        from t_student
+        WHERE school_code=#{schoolCode} AND card_number=#{cardNumber};
+    </select>
+    <select id="findStudentInfoByClassId" resultMap="BaseResultMap">
+        select
+        <include refid="studentCloumn"/>
+        from t_student
+        <where>
+            and school_code=#{schoolCode}
+            <choose>
+                <when test="type != 0">
+                    and class_ids like CONCAT('%',CONCAT(#{classIds},'%'))
+                </when>
+                <otherwise>
+                    and class_ids like CONCAT(#{classIds},'%')
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <update id="updateSchoolName">
+		    update t_student
+            set school_name=#{schoolName}
+            where school_code=#{schoolCode}
+	</update>
+    <!-- 学生激活 -->
+    <update id="updateStudentActivation">
+      		update t_student
+            set activate=#{activate}
+            where school_code=#{schoolCode} and card_number=#{cardNumber}
+    </update>
+</mapper>

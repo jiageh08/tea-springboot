@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdxh.user.persistence.FamilyStudentMapper">
+  <resultMap id="BaseResultMap" type="com.bdxh.user.entity.FamilyStudent">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="school_id" jdbcType="BIGINT" property="schoolId" />
+    <result column="school_code" jdbcType="CHAR" property="schoolCode" />
+    <result column="card_number" jdbcType="VARCHAR" property="cardNumber" />
+    <result column="family_id" jdbcType="BIGINT" property="familyId" />
+    <result column="student_id" jdbcType="BIGINT" property="studentId" />
+    <result column="student_name" jdbcType="VARCHAR" property="studentName" />
+    <result column="student_number" jdbcType="VARCHAR" property="studentNumber" />
+    <result column="relation" jdbcType="VARCHAR" property="relation" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="operator_name" jdbcType="VARCHAR" property="operatorName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+    <!-- 学生删除家长孩子绑定信息-->
+    <delete id="studentRemoveFamilyStudentInfo">
+     DELETE FROM t_family_student
+     WHERE school_code=#{schoolCode}
+     AND student_number=#{studentNumber}
+    </delete>
+  <!-- 家长删除绑定关系 -->
+    <delete id="familyRemoveFamilyStudent">
+       DELETE FROM t_family_student
+       WHERE school_code=#{schoolCode}
+       AND card_number=#{cardNumber}
+        <if test="id!=null and id!=''">
+           AND  `id`=#{id}
+        </if>
+    </delete>
+    <!-- 家长查询绑定关系 -->
+    <select id="selectFamilyStudentInfo" resultType="com.bdxh.user.vo.FamilyStudentVo">
+        select
+          fs.student_id AS sid,
+          fs.student_name AS sName,
+          fs.student_number AS sCardNumber,
+          fs.id AS fsId,
+          fs.relation,
+          fs.remark
+        from t_family_student AS fs where fs.school_code=#{schoolCode} and fs.card_number=#{cardNumber}
+    </select>
+    <!--学生查询关系表数据-->
+    <select id="studentQueryInfo" resultType="com.bdxh.user.vo.FamilyStudentVo">
+          select
+          student_id AS id,
+          student_name AS sName,
+          student_number AS sCardNumber,
+          id AS fsId,
+          family_id  AS fId,
+          card_number as fCardNumber,
+          relation   from t_family_student where student_number=#{cardNumber} and school_code=#{schoolCode}
+    </select>
+    <!--家长卡号查询绑定关系信息-->
+    <select id="queryStudentByFamilyCardNumber" resultType="com.bdxh.user.vo.FamilyStudentVo">
+          select
+          student_id AS id,
+          student_name AS sName,
+          student_number AS sCardNumber,
+          id AS fsId,
+          family_id  AS fId,
+          card_number as fCardNumber,
+          relation   from t_family_student where card_number=#{familyCardNumber} and school_code=#{schoolCode}
+    </select>
+    <select id="queryaAllFamilyStudent" resultType="com.bdxh.user.vo.FamilyStudentVo">
+         select
+          student_id AS id,
+          student_name AS sName,
+          student_number AS sCardNumber,
+          school_code AS schoolCode,
+          id AS fsId,
+          card_number as fCardNumber,
+          remark as remark,
+          create_date as createDate,
+          relation   from t_family_student
+        <where>
+            <if test="familyStudentQueryDto.studentName!=null and familyStudentQueryDto.studentName!=''">
+            and   student_name like CONCAT('%',CONCAT(#{familyStudentQueryDto.studentName},'%'))
+            </if>
+            <if test="familyStudentQueryDto.cardNumber!=null and familyStudentQueryDto.cardNumber!=''">
+                and   card_number = #{familyStudentQueryDto.cardNumber}
+            </if>
+            <if test="familyStudentQueryDto.studentNumber!=null and familyStudentQueryDto.studentNumber!=''">
+                and   student_number = #{familyStudentQueryDto.studentNumber}
+            </if>
+            <if test="familyStudentQueryDto.schoolCode!=null and familyStudentQueryDto.schoolCode!=''">
+                and   school_code = #{familyStudentQueryDto.schoolCode}
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+    <!-- 修改关系表数据-->
+        <update id="updateStudentInfo">
+             UPDATE t_family_student
+             SET
+             `student_name`=#{familyStudentDto.studentName},
+             `update_date`=NOW()
+              WHERE
+             `school_code`=#{familyStudentDto.schoolCode}
+             AND
+             `card_number`=#{familyStudentDto.cardNumber};
+        </update>
+
+    <!--批量删除家长学生关系数据信息-->
+    <delete id="batchRemoveFamilyStudentInfo">
+        delete from t_family_student where (school_code,card_number)in
+        <foreach collection="list" separator="," open="(" close=")" item="list" >
+            (#{list.schoolCode},#{list.cardNumber})
+        </foreach>
+    </delete>
+
+
+</mapper>

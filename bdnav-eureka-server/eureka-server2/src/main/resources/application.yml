@@ -1,0 +1,11 @@
+server:
+  port: 9002
+spring:
+  application:
+    name: eureka-server-cluster
+  profiles:
+    active: dev
+  security:
+    user:
+      name: admin
+      password: bdxh123456

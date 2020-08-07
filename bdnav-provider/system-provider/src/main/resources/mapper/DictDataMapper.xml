@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdxh.system.persistence.DictDataMapper">
+  <resultMap id="BaseResultMap" type="com.bdxh.system.entity.DictData">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="dict_id" jdbcType="BIGINT" property="dictId" />
+    <result column="data_name" jdbcType="VARCHAR" property="dataName" />
+    <result column="data_value" jdbcType="VARCHAR" property="dataValue" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="operator" jdbcType="BIGINT" property="operator" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+
+  <sql id="BaseColumns" >
+    id,dict_id,data_name,data_value,sort,create_date,update_date,operator,remark
+  </sql>
+
+  <select id="getByCondition" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="BaseColumns"/>
+    FROM
+    sys_dict_data
+    <where>
+      <if test="dataName !=null">
+        data_name LIKE CONCAT(CONCAT('%',#{dataName},'%'))
+      </if>
+    </where>
+    ORDER BY sort or create_date DESC
+  </select>
+
+  <!-- 根据dictid查询所属字典目录-->
+  <select id="getDictDataById" resultMap="BaseResultMap">
+    SELECT
+      <include refid="BaseColumns"/>
+    FROM
+      sys_dict_data
+    <where>
+      <if test="dictId !=null">
+        dict_id=#{dictId}
+      </if>
+    </where>
+    ORDER BY sort or create_date DESC
+  </select>
+
+  <delete id="deleteDictDataById" parameterType="java.lang.Long">
+    delete from sys_dict_data where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <!-- 根据字典数据名称查询字典数据 -->
+  <select id="getByDictDataName" resultMap="BaseResultMap">
+    select <include refid="BaseColumns"/>
+    from sys_dict_data where dict_id = #{dictId} and data_name = #{dataName} limit 1;
+  </select>
+</mapper>

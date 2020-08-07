@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdxh.system.persistence.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.bdxh.system.entity.Permission">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="parent_ids" jdbcType="VARCHAR" property="parentIds"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="operator" jdbcType="BIGINT" property="operator"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+    <resultMap id="RpResultMap" type="com.bdxh.system.dto.RolePermissionDto">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="parent_ids" jdbcType="VARCHAR" property="parentIds"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="operator" jdbcType="BIGINT" property="operator"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <collection property="rplist" ofType="com.bdxh.system.entity.RolePermission">
+            <id column="id" jdbcType="BIGINT" property="id" />
+            <result column="role_id" jdbcType="BIGINT" property="roleId" />
+            <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
+            <result column="selected" jdbcType="TINYINT" property="selected" />
+            <result column="checked" jdbcType="TINYINT" property="checked" />
+            <result column="indeterminate" jdbcType="TINYINT" property="indeterminate" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="UpResultMap" type="com.bdxh.system.dto.UserPermissionDto">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="parent_ids" jdbcType="VARCHAR" property="parentIds"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <collection property="userRolesList" ofType="com.bdxh.system.entity.UserRole">
+            <id column="id" jdbcType="BIGINT" property="id" />
+            <result column="user_id" jdbcType="BIGINT" property="userId" />
+            <result column="role_id" jdbcType="BIGINT" property="roleId" />
+        </collection>
+        <collection property="roleAuthority" ofType="com.bdxh.system.entity.RolePermission">
+            <id column="id" jdbcType="BIGINT" property="id" />
+            <result column="role_id" jdbcType="BIGINT" property="roleId" />
+            <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
+            <result column="selected" jdbcType="TINYINT" property="selected" />
+            <result column="checked" jdbcType="TINYINT" property="checked" />
+            <result column="indeterminate" jdbcType="TINYINT" property="indeterminate" />
+        </collection>
+    </resultMap>
+
+    <sql id="BaseColumns">
+    id, parent_id, parent_ids, `name`,title, path, icon, component, sort, `level`, `type`, create_date, update_date, operator, remark
+  </sql>
+
+    <sql id="BaseColumns1">
+    perm.id, perm.parent_id, perm.parent_ids, perm.name,
+    perm.path, perm.icon,perm.component, perm.sort, perm.level, perm.type, perm.create_date, perm.update_date, perm.operator, perm.remark
+    </sql>
+
+    <select id="findPermissionByRoleId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumns1"/>
+        FROM
+        sys_permission perm
+        INNER JOIN sys_role_permission roleperm ON perm.id=roleperm.permission_id
+        WHERE
+        roleperm.role_id=#{roleId,jdbcType=BIGINT}
+        AND
+        perm.type=#{type,jdbcType=TINYINT}
+    </select>
+
+    <select id="findPermissionByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumns1"/>
+        FROM
+        sys_permission perm
+        INNER JOIN sys_role_permission roleperm ON perm.id=roleperm.permission_id
+        INNER JOIN sys_user_role user_role ON user_role.role_id=roleperm.role_id
+        WHERE
+        user_role.user_id=#{userId,jdbcType=BIGINT}
+    </select>
+
+
+    <delete id="batchDelPermissionInIds">
+        DELETE
+        FROM
+        sys_permission
+        WHERE
+        id IN
+        <foreach collection="ids" item="empId" separator="," open="(" close=")">
+            #{empId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+    <select id="theTreeMenu" resultMap="RpResultMap">
+    SELECT
+      *
+     FROM
+	sys_permission
+    LEFT JOIN sys_role_permission ON sys_permission.id = sys_role_permission.permission_id
+        <where>
+            <if test=" roleId !=null "> AND  sys_role_permission.role_id=#{roleId,jdbcType=BIGINT} </if>
+            <if test=" selected !=null"> AND sys_role_permission.selected =#{selected}  </if>
+        </where>
+    </select>
+
+
+    <select id="findPermission" resultMap="RpResultMap">
+        SELECT
+        *
+        FROM
+        sys_permission
+        INNER JOIN sys_role_permission ON sys_permission.id=sys_role_permission.permission_id
+        sys_role_permission.role_id=#{roleId,jdbcType=BIGINT} AND sys_role_permission.selected=#{selected,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByTitle" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumns"/>
+        FROM
+        sys_permission
+        <where>
+            <if test="title!=null">
+                title LIKE CONCAT(CONCAT('%',#{title},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="findPermissionByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="BaseColumns"/>
+        from sys_permission
+        where parent_id=#{parentId}
+    </select>
+
+
+    <select id="findUserRights" resultMap="UpResultMap">
+  SELECT
+	p.*, ur.*, rp.id,
+	rp.rp_switch,
+	rp.selected,
+	rp.indeterminate,
+	rp.checked,
+	rp.role_id,
+	COUNT(DISTINCT rp.permission_id)
+FROM
+	sys_permission p
+INNER JOIN sys_role_permission rp ON p.id = rp.permission_id
+INNER JOIN sys_user_role ur ON rp.role_id = ur.role_id
+WHERE
+	ur.user_id = #{userId}
+AND p.type = #{type}
+GROUP BY
+	rp.permission_id
+
+    </select>
+</mapper>

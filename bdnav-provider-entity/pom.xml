@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bdnav-platform</artifactId>
+        <groupId>com.bdxh</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>bdnav-provider-entity</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>onecard-provider-entity</module>
+        <module>order-provider-entity</module>
+        <module>servicepermit-provider-entity</module>
+        <module>pay-provider-entity</module>
+        <module>product-provider-entity</module>
+        <module>mapservice-provider-entity</module>
+        <module>applecontrol-provider-entity</module>
+        <module>system-provider-entity</module>
+        <module>school-provider-entity</module>
+        <module>user-provider-entity</module>
+        <module>appmarket-provider-entity</module>
+        <module>account-provider-entity</module>
+        <module>appburied-provider-entity</module>
+        <module>weixiao-provider-entity</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bdxh</groupId>
+            <artifactId>common-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+</project>

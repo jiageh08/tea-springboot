@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdxh.user.persistence.FamilyFenceMapper">
+  <resultMap id="BaseResultMap" type="com.bdxh.user.entity.FamilyFence">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="school_id" jdbcType="BIGINT" property="schoolId" />
+    <result column="school_code" jdbcType="CHAR" property="schoolCode" />
+    <result column="school_name" jdbcType="VARCHAR" property="schoolName" />
+    <result column="card_number" jdbcType="VARCHAR" property="cardNumber" />
+    <result column="family_id" jdbcType="BIGINT" property="familyId" />
+    <result column="student_id" jdbcType="BIGINT" property="studentId" />
+    <result column="student_name" jdbcType="VARCHAR" property="studentName" />
+    <result column="student_number" jdbcType="VARCHAR" property="studentNumber" />
+    <result column="fence_id" jdbcType="INTEGER" property="fenceId" />
+    <result column="fence_name" jdbcType="VARCHAR" property="fenceName" />
+    <result column="longitude" jdbcType="DECIMAL" property="longitude" />
+    <result column="latitude" jdbcType="DECIMAL" property="latitude" />
+    <result column="radius" jdbcType="DECIMAL" property="radius" />
+    <result column="coord_type" jdbcType="VARCHAR" property="coordType" />
+    <result column="denoise" jdbcType="INTEGER" property="denoise" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="BaseColumns">
+    id,school_id,school_code,card_number,family_id,student_id,student_name,student_number,fence_id,fence_name,longitude,latitude,radius,coord_type,denoise,status,create_date,update_date,remark
+  </sql>
+  <!--获取围栏表所有信息-->
+  <select id="getFamilyFenceInfos" resultType="com.bdxh.user.vo.FamilyFenceVo" >
+    SELECT
+    familyFence.id,
+    familyFence.school_id as schoolId,
+    familyFence.school_code as schoolCode,
+    familyFence.card_number as cardNumber,
+    familyFence.family_id as familyId,
+    familyFence.student_id as studentId,
+    familyFence.student_name as studentName,
+    familyFence.student_number as studentNumber,
+    familyFence.fence_id as fenceId,
+    familyFence.fence_name as fenceName,
+    familyFence.longitude,
+    familyFence.latitude,
+    familyFence.radius,
+    familyFence.coord_type as coordType,
+    familyFence.denoise,
+    familyFence.status,
+    familyFence.create_date as createDate,
+    familyFence.update_date as updateDate,
+    familyFence.remark,
+    family.school_name as schoolName,
+    family.name as familyName
+    FROM
+    t_family_fence AS familyFence
+    LEFT JOIN t_family AS family ON family.id = familyFence.family_id
+  <where>
+    <if test="familyFence.schoolCode!=null and familyFence.schoolCode!=''">
+      AND familyFence.school_code LIKE   CONCAT('%',CONCAT(#{familyFence.schoolCode},'%'))
+    </if>
+    <if test="familyFence.cardNumber!=null and familyFence.cardNumber!=''">
+      AND familyFence.card_number LIKE   CONCAT('%',CONCAT(#{familyFence.cardNumber},'%'))
+    </if>
+    <if test="familyFence.studentName!=null and familyFence.studentName!=''">
+      AND familyFence.student_name LIKE   CONCAT('%',CONCAT(#{familyFence.studentName},'%'))
+    </if>
+    <if test="familyFence.studentNumber!=null and familyFence.studentNumber!=''">
+      AND familyFence.student_number LIKE   CONCAT('%',CONCAT(#{familyFence.studentNumber},'%'))
+    </if>
+    <if test="familyFence.fenceName!=null and familyFence.fenceName!=''">
+      AND familyFence.fence_name LIKE   CONCAT('%',CONCAT(#{familyFence.fenceName},'%'))
+    </if>
+    <if test="familyFence.status!=null and familyFence.status!=''">
+      AND familyFence.status LIKE   CONCAT('%',CONCAT(#{familyFence.status},'%'))
+    </if>
+  </where>
+    order by familyFence.create_date desc
+  </select>
+
+   <!--获取围栏表单个信息-->
+  <select id="getFamilyFenceInfo"  resultMap="BaseResultMap">
+  select <include refid="BaseColumns"/> from t_family_fence where school_code=#{schoolCode} AND card_number=#{cardNumber} and id=#{id}
+  </select>
+
+   <!--删除围栏表信息-->
+  <delete id="removeFamilyFenceInfo">
+delete from t_family_fence where school_code=#{schoolCode} AND card_number=#{cardNumber} AND id=#{id}
+  </delete>
+
+   <!--修改围栏表信息-->
+  <update id="updateFamilyFenceInfo">
+    UPDATE t_family_fence
+    SET
+
+    <if test="familyFence.studentId !=null and familyFence.studentId !=''">
+      student_id = #{familyFence.studentId},
+    </if>
+    <if test="familyFence.studentName !=null and familyFence.studentName !=''">
+      student_name = #{familyFence.studentName},
+    </if>
+    <if test="familyFence.fenceId !=null and familyFence.fenceId !=''">
+      fence_id = #{familyFence.fenceId},
+    </if>
+    <if test="familyFence.fenceName !=null and familyFence.fenceName !=''">
+      fence_name = #{familyFence.fenceName},
+    </if>
+    <if test="familyFence.studentNumber !=null and familyFence.studentNumber !=''">
+      student_number = #{familyFence.studentNumber},
+    </if>
+    <if test="familyFence.longitude !=null and familyFence.longitude !=''">
+      longitude = #{familyFence.longitude},
+    </if>
+    <if test="familyFence.latitude !=null and familyFence.latitude !=''">
+      latitude = #{familyFence.latitude},
+    </if>
+    <if test="familyFence.radius !=null and familyFence.radius !=''">
+      radius = #{familyFence.radius},
+    </if>
+    <if test="familyFence.coordType !=null and familyFence.coordType !=''">
+      coord_type = #{familyFence.coordType},
+    </if>
+    <if test="familyFence.denoise !=null and familyFence.denoise !=''">
+      denoise = #{familyFence.denoise},
+    </if>
+    <if test="familyFence.status !=null and familyFence.status !=''">
+      status = #{familyFence.status},
+    </if>
+    <if test="familyFence.createDate !=null and familyFence.createDate !=''">
+      create_date = #{familyFence.createDate},
+    </if>
+    <if test="familyFence.remark !=null and familyFence.remark !=''">
+      remark = #{familyFence.remark},
+    </if>
+    update_date = #{familyFence.updateDate}
+WHERE
+	school_code=#{familyFence.schoolCode} and card_number=#{familyFence.cardNumber} and id=#{familyFence.id}
+  </update>
+
+  <select id="findOneStudentFenceId" resultType="java.lang.Integer">
+select fence_id from t_family_fence where school_code=#{schoolCode}
+and card_number=#{cardNumber}
+and student_number=#{studentNumber}
+  </select>
+</mapper>

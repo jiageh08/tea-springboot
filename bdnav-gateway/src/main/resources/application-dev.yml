@@ -1,0 +1,43 @@
+info:
+  groupId: @project.groupId@
+  artifactId: @project.artifactId@
+  version: @project.version@
+eureka:
+  instance:
+    hostname: zuul-gateway1
+    instance-id: gateway-instance:${server.port}
+    prefer-ip-address: false
+  client:
+    serviceUrl:
+      defaultZone: http://admin:bdxh123456@eureka-server1:9001/eureka/,http://admin:bdxh123456@eureka-server2:9002/eureka/,http://admin:bdxh123456@eureka-server3:9003/eureka/
+zuul:
+  semaphore:
+    max-semaphores: 10000
+  ribbon:
+    eager-load:
+      enabled: true
+  host:
+    connect-timeout-millis: 5000
+    socket-timeout-millis: 15000
+  routes:
+    api-a:
+      path: /school/** #网关地址
+      serviceId: school-provider-cluster #代理到对应的服务
+    api-b:
+      path: /wallet/** #网关地址
+      serviceId: wallet-provider-cluster #代理到对应的服务
+    api-c:
+      path: /pay/** #网关地址
+      serviceId: pay-provider-cluster #代理到对应的服务
+    api-d:
+      path: /product/** #网关地址
+      serviceId: product-provider-cluster #代理到对应的服务
+hystrix:
+  command:        
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 15000

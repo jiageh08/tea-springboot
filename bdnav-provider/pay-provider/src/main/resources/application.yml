@@ -1,0 +1,9 @@
+server:
+  port: 9017
+spring:
+  application:
+    name: pay-provider-cluster
+  profiles:
+    active: dev
+logging:
+  config: classpath:logback-spring.xml
